@@ -9,7 +9,7 @@ This document serves as a technical foundation designed to support progress in f
 To clone and run this application, you'll need Git and Node.js (which comes with npm) installed on your computer.
 From your command line:
 
-```
+```bash
 # Clone this repository
 $ git clone https://github.com/pierrealbanl/engineering-docs.git
 
@@ -19,19 +19,19 @@ $ cd engineering-docs
 # Install dependencies
 $ npm install
 
-# Run the app
-$ npm start
+# Run the development server
+$ npm run dev
 ```
 
-## Créer ou renommer une catégorie
+## Create or Rename a Category
 
-Une catégorie correspond à un dossier situé dans `src/docs`. Par exemple, la catégorie **Full Stack Development** est créée par le dossier suivant :
+A category corresponds to a directory inside `src/docs`. For example, the **Full Stack Development** category is created by the following directory:
 
 ```text
 src/docs/full-stack-development/
 ```
 
-Tous les fichiers Markdown ajoutés dans ce dossier apparaissent automatiquement dans cette catégorie :
+Every Markdown file added to this directory automatically appears in that category:
 
 ```text
 src/docs/
@@ -41,18 +41,18 @@ src/docs/
     └── react.md
 ```
 
-Par défaut, le nom du dossier est transformé en titre : les tirets deviennent des espaces et chaque mot commence par une majuscule. Ainsi, `full-stack-development` devient **Full Stack Development**.
+By default, the directory name is converted into a title: hyphens become spaces and each word is capitalized. Therefore, `full-stack-development` becomes **Full Stack Development**.
 
-Pour choisir précisément le nom et la position de la catégorie, créez un fichier `_category.json` dans son dossier :
+To define the category label and position explicitly, create a `_category.json` file inside its directory:
 
 ```json
 {
-  "label": "Développement Full Stack",
+  "label": "Full Stack Development",
   "position": 2
 }
 ```
 
-Cette configuration ne nécessite aucune modification de TypeScript. Les sous-catégories fonctionnent de la même façon :
+This configuration does not require any TypeScript changes. Nested categories work the same way:
 
 ```text
 src/docs/
@@ -63,4 +63,4 @@ src/docs/
         └── hooks.md
 ```
 
-Les catégories et sous-catégories sont triées selon leur propriété `position`, puis par ordre alphabétique lorsque cette propriété est absente.
+Categories and nested categories are sorted by their `position` property, then alphabetically when that property is omitted.
