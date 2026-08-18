@@ -1,0 +1,103 @@
+.app-header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: var(--z-header);
+  display: flex;
+  align-items: center;
+  height: var(--height-header);
+  border-bottom: var(--border-width-hairline) solid var(--color-header-border);
+  background: var(--color-header-background);
+  color: var(--color-header-text);
+}
+
+.app-header__brand {
+  display: flex;
+  align-items: center;
+  width: var(--width-sidebar);
+  height: 100%;
+  padding: 0 var(--spacing-md);
+  color: inherit;
+  font-size: var(--font-size-sm);
+  text-decoration: none;
+}
+.app-header__actions {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  margin-left: auto;
+}
+
+.app-header__search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: var(--width-search-trigger);
+  height: var(--height-search-trigger);
+  margin-right: var(--spacing-sm);
+  border: 0;
+  border-bottom: var(--border-width-hairline) solid
+    var(--color-header-border-strong);
+  padding: 0 var(--spacing-xl);
+  background: var(--color-header-search);
+  color: var(--color-header-text-muted);
+  font-size: var(--font-size-sm);
+  text-align: left;
+}
+
+.app-header__search > svg {
+  position: absolute;
+  left: var(--spacing-sm);
+}
+.app-header__search:hover {
+  background: var(--color-header-search-hover);
+}
+.app-header__search:focus-visible {
+  outline-color: var(--color-white);
+}
+.app-header__icon {
+  display: grid;
+  place-items: center;
+  width: var(--height-header);
+  height: var(--height-header);
+  border: 0;
+  border-left: var(--border-width-hairline) solid var(--color-header-border);
+  background: transparent;
+  color: inherit;
+  font-size: var(--font-size-lg);
+}
+.app-header__icon:hover {
+  background: var(--color-header-hover);
+}
+.app-header__menu {
+  display: none;
+}
+
+@media (max-width: 800px) {
+  .app-header__menu {
+    display: grid;
+  }
+  .app-header__brand {
+    width: auto;
+  }
+  .app-header__search {
+    width: var(--height-header);
+    height: var(--height-header);
+    margin: 0;
+    border: 0;
+    border-left: var(--border-width-hairline) solid var(--color-header-border);
+    justify-content: center;
+  }
+  .app-header__search span {
+    display: none;
+  }
+  .app-header__search > svg {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header__brand > span:last-child {
+    display: none;
+  }
+}

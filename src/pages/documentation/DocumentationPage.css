@@ -1,0 +1,39 @@
+.documentation-page {
+  grid-column: 2;
+  width: 100%;
+  margin: 0;
+  padding: var(--spacing-2xl) var(--spacing-2xl) 0;
+  outline: 0;
+}
+
+.documentation-page__breadcrumb {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--spacing-3xl);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-xs);
+  line-height: 1rem;
+  white-space: nowrap;
+  overflow-x: auto;
+}
+.documentation-page__breadcrumb a {
+  color: var(--color-link);
+  text-decoration: none;
+}
+.documentation-page__breadcrumb a:hover {
+  text-decoration: underline;
+}
+.documentation-page__breadcrumb a:active {
+  color: var(--color-text-primary);
+}
+.documentation-page__breadcrumb-separator {
+  margin: 0 var(--spacing-2xs);
+}
+@media (max-width: 800px) {
+  .documentation-page {
+    padding: var(--spacing-xl) var(--spacing-lg) 0;
+  }
+  .documentation-page__breadcrumb {
+    margin-bottom: var(--spacing-2xl);
+  }
+}

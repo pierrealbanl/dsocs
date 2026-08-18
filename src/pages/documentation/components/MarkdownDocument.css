@@ -1,0 +1,119 @@
+.markdown-document > div:first-child > h1 {
+  max-width: var(--width-heading);
+  margin: 0 0 var(--spacing-lg);
+  font-size: var(--font-size-display);
+  line-height: var(--line-height-display);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+}
+
+.markdown-document,
+.markdown-document > div {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.markdown-document h2 {
+  margin: var(--spacing-section) 0 var(--spacing-lg);
+  scroll-margin-top: var(--spacing-scroll-offset);
+  font-size: var(--font-size-2xl);
+  line-height: var(--line-height-2xl);
+  font-weight: 400;
+}
+
+.markdown-document h3 {
+  margin: var(--spacing-3xl) 0 var(--spacing-md);
+  scroll-margin-top: var(--spacing-scroll-offset);
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height-xl);
+  font-weight: 400;
+}
+
+.markdown-document h4 {
+  margin: var(--spacing-2xl) 0 var(--spacing-sm);
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+}
+
+.markdown-document p,
+.markdown-document li {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+}
+
+.markdown-document p {
+  margin: 0 0 var(--spacing-md);
+}
+.markdown-document ul,
+.markdown-document ol {
+  margin: 0 0 var(--spacing-lg);
+  padding-left: var(--spacing-xl);
+}
+.markdown-document li {
+  padding-left: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
+}
+.markdown-document a {
+  color: var(--color-link);
+  text-underline-offset: 0.15rem;
+}
+.markdown-document a:hover {
+  color: var(--color-link-hover);
+}
+
+.markdown-document :not(pre) > code {
+  border: var(--border-width-hairline) solid var(--color-border-subtle);
+  padding: 0.125rem 0.25rem;
+  background: var(--color-surface-subtle);
+  color: var(--color-text-primary);
+  font: var(--font-size-sm) var(--font-family-mono);
+}
+
+.markdown-document blockquote {
+  margin: var(--spacing-xl) 0;
+  border-left: var(--border-width-emphasis) solid var(--color-border-strong);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: var(--color-surface-subtle);
+}
+
+.markdown-document blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-document__code-loading {
+  margin: var(--spacing-xl) 0;
+  padding: var(--spacing-lg);
+  overflow: auto;
+  background: var(--color-code-background);
+  color: var(--color-code-text);
+  font: var(--font-size-sm) / var(--line-height-code) var(--font-family-mono);
+}
+
+.markdown-document hr {
+  margin: var(--spacing-2xl) 0;
+  border: 0;
+  border-top: var(--border-width-hairline) solid var(--color-border-subtle);
+}
+
+.markdown-document table {
+  width: 100%;
+  margin: var(--spacing-xl) 0;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.markdown-document th {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-top: var(--border-width-hairline) solid var(--color-border-strong);
+  border-bottom: var(--border-width-hairline) solid var(--color-border-subtle);
+  background: var(--color-surface-subtle);
+  text-align: left;
+}
+
+.markdown-document td {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-bottom: var(--border-width-hairline) solid var(--color-border-subtle);
+  color: var(--color-text-secondary);
+  vertical-align: top;
+}

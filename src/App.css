@@ -1,0 +1,40 @@
+.app-shell {
+  min-height: 100vh;
+  background: var(--color-surface-page);
+  color: var(--color-text-primary);
+}
+
+.app-shell__layout {
+  display: grid;
+  grid-template-columns: var(--width-sidebar) minmax(0, 1fr) var(
+      --width-table-of-contents
+    );
+  min-height: 100vh;
+  padding-top: var(--height-header);
+}
+
+.app-shell__skip-link {
+  position: fixed;
+  z-index: var(--z-skip-link);
+  top: calc(var(--height-header) * -1);
+  left: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-surface-page);
+  color: var(--color-text-primary);
+}
+
+.app-shell__skip-link:focus {
+  top: 0;
+}
+
+@media (max-width: 1180px) {
+  .app-shell__layout {
+    grid-template-columns: var(--width-sidebar) minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 800px) {
+  .app-shell__layout {
+    display: block;
+  }
+}
