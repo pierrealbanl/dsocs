@@ -51,7 +51,7 @@
   background: var(--color-header-search-hover);
 }
 .app-header__search:focus-visible {
-  outline-color: var(--color-white);
+  outline-color: var(--color-header-focus);
 }
 .app-header__icon {
   display: grid;

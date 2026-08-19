@@ -1,10 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
 
 :root {
-  --color-white: #ffffff;
   --color-surface-page: #ffffff;
   --color-surface-subtle: #f4f4f4;
-  --color-surface-strong: #e0e0e0;
   --color-text-primary: #161616;
   --color-text-secondary: #525252;
   --color-text-helper: #6f6f6f;
@@ -22,19 +20,22 @@
   --color-highlight: #d0e2ff;
   --color-highlight-text: #161616;
   --color-hover: #e8e8e8;
+  --color-selected: #e0e0e0;
+  --color-selected-hover: #d1d1d1;
   --color-support-info: #0043ce;
   --color-support-success: #24a148;
   --color-support-warning: #f1c21b;
   --color-support-danger: #da1e28;
   --color-support-tip: #8a3ffc;
-  --color-header-background: #161616;
-  --color-header-border: #393939;
-  --color-header-border-strong: #525252;
-  --color-header-hover: #353535;
-  --color-header-search: #262626;
-  --color-header-search-hover: #333333;
-  --color-header-text: #f4f4f4;
-  --color-header-text-muted: #c6c6c6;
+  --color-header-background: #ffffff;
+  --color-header-border: #e0e0e0;
+  --color-header-border-strong: #8d8d8d;
+  --color-header-hover: #e8e8e8;
+  --color-header-search: #f4f4f4;
+  --color-header-search-hover: #e8e8e8;
+  --color-header-text: #161616;
+  --color-header-text-muted: #6f6f6f;
+  --color-header-focus: #0f62fe;
   --color-code-background: #161616;
   --color-code-border: #393939;
   --color-code-hover: #353535;
@@ -113,7 +114,6 @@
 :root[data-theme='dark'] {
   --color-surface-page: #161616;
   --color-surface-subtle: #262626;
-  --color-surface-strong: #393939;
   --color-text-primary: #f4f4f4;
   --color-text-secondary: #c6c6c6;
   --color-text-helper: #a8a8a8;
@@ -131,11 +131,22 @@
   --color-highlight: #001d6c;
   --color-highlight-text: #f4f4f4;
   --color-hover: #333333;
+  --color-selected: #393939;
+  --color-selected-hover: #4c4c4c;
   --color-support-info: #4589ff;
   --color-support-success: #42be65;
   --color-support-warning: #f1c21b;
   --color-support-danger: #fa4d56;
   --color-support-tip: #be95ff;
+  --color-header-background: #161616;
+  --color-header-border: #393939;
+  --color-header-border-strong: #525252;
+  --color-header-hover: #353535;
+  --color-header-search: #262626;
+  --color-header-search-hover: #333333;
+  --color-header-text: #f4f4f4;
+  --color-header-text-muted: #c6c6c6;
+  --color-header-focus: #ffffff;
 }
 
 * {
