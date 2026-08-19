@@ -35,8 +35,7 @@
   height: var(--height-search-trigger);
   margin-right: var(--spacing-sm);
   border: 0;
-  border-bottom: var(--border-width-hairline) solid
-    var(--color-header-border-strong);
+  border-bottom: var(--border-width-hairline) solid var(--color-header-border-strong);
   padding: 0 var(--spacing-xl);
   background: var(--color-header-search);
   color: var(--color-header-text-muted);

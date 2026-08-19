@@ -6,7 +6,7 @@ sidebar_position: 0
 
 # Préambule
 
-Cette section s’adresse aux personnes souhaitant apprendre le développement full stack, avec, dans un premier temps, l’apprentissage de Spring Boot, puis, dans un second temps, celui de React. Cette documentation s’appuie sur le livre de Juha Hinkula intitulé *Full Stack Development with Spring Boot 3 and React*. Nous n’allons pas aborder les notions de Java, mais si vous avez suivi ma documentation sur le CPP, cela devrait suffire.
+Cette section s’adresse aux personnes souhaitant apprendre le développement full stack, avec, dans un premier temps, l’apprentissage de Spring Boot, puis, dans un second temps, celui de React. Cette documentation s’appuie sur le livre de Juha Hinkula intitulé *Full Stack Development with Spring Boot 3 and React*. Nous n’allons pas aborder les notions de Java, mais si vous avez suivi ma documentation sur le C++, cela devrait suffire.
 
 ## Création et configuration d’un projet Spring Boot avec Gradle
 

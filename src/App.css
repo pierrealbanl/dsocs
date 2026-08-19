@@ -6,9 +6,7 @@
 
 .app-shell__layout {
   display: grid;
-  grid-template-columns: var(--width-sidebar) minmax(0, 1fr) var(
-      --width-table-of-contents
-    );
+  grid-template-columns: var(--width-sidebar) minmax(0, 1fr) var(--width-table-of-contents);
   min-height: 100vh;
   padding-top: var(--height-header);
 }

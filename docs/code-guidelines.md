@@ -2,7 +2,7 @@
 
 Defines how code is formatted. Read it before reformatting a file or setting up a new machine.
 
-Because nothing in the repository enforces the style automatically, a formatting change is only as good as the verification that follows it (see section 5).
+The rules below are enforced automatically by Prettier, configured in `.prettierrc` at the root of the repository (see section 5). The WebStorm settings in section 4 exist so the editor produces the same result while typing, not a different one.
 
 ## 1. Whitespace
 
@@ -58,3 +58,16 @@ Everything below lives under **Settings → Editor → Code Style**. Set it on t
 * **Disable Indents Detection.** A yellow banner reads *"Settings may be overridden by Indents Detection"*. While it is showing, WebStorm reads each file's existing indentation and preserves it, silently ignoring the scheme. A reformat then appears to do nothing, or to keep the old indent. The setting is stored **per scheme**: switching from the project scheme to the IDE one brings the detection back, and it has to be disabled again.
 * **Reformat Code and Cleanup Code are different.** Reformat touches whitespace and line wrapping only. Cleanup additionally applies every enabled inspection's quick-fix, which can change code semantics. Run them separately, and never blend Cleanup into a formatting-only commit.
 * **After changing the scheme, a cache invalidation may be needed** (File → Invalidate Caches → *Invalidate and Restart*, all optional boxes left unchecked) before the new values take effect on existing files.
+
+## 5. Enforcement
+
+`.prettierrc` is the single source of truth for everything in sections 1 to 3. It is checked into the repository, so the style does not depend on anyone's editor being configured correctly.
+
+```bash
+npm run format        # rewrites src/ to match the style
+npm run format:check  # fails when a file does not match
+```
+
+The values map one-to-one onto the rules above: `semi: false` and `singleQuote: true` for section 2, `printWidth: 160` and `tabWidth: 2` for section 1, `bracketSpacing: true` and `trailingComma: 'all'` for sections 2 and 3. `jsxSingleQuote` stays `false` because JSX attributes keep double quotes.
+
+Changing a rule means changing `.prettierrc` and this document in the same commit, then running `npm run format` so the tree never sits in a state the config disagrees with.

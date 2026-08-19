@@ -53,3 +53,12 @@
   overflow-y: hidden;
   font: var(--font-size-sm)/var(--line-height-code) var(--font-family-mono) !important;
 }
+
+.code-block__status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

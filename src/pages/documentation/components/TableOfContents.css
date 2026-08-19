@@ -44,7 +44,7 @@
   inset: 0 auto 0 -1px;
   width: var(--border-width-active);
   background: var(--color-interactive);
-  content: "";
+  content: '';
 }
 
 @media (max-width: 1180px) {

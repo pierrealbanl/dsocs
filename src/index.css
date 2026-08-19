@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
 
 :root {
   --color-white: #ffffff;
@@ -42,8 +42,8 @@
   --color-code-helper: #a8a8a8;
   --color-overlay: rgba(0, 0, 0, 0.6);
 
-  --font-family-sans: "IBM Plex Sans", Arial, sans-serif;
-  --font-family-mono: "IBM Plex Mono", monospace;
+  --font-family-sans: 'IBM Plex Sans', Arial, sans-serif;
+  --font-family-mono: 'IBM Plex Mono', monospace;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-base: 1rem;
@@ -110,7 +110,7 @@
   -webkit-font-smoothing: antialiased;
 }
 
-:root[data-theme="dark"] {
+:root[data-theme='dark'] {
   --color-surface-page: #161616;
   --color-surface-subtle: #262626;
   --color-surface-strong: #393939;
@@ -172,7 +172,7 @@ a {
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
-[tabindex="0"]:focus-visible {
+[tabindex='0']:focus-visible {
   outline: var(--border-width-focus) solid var(--color-focus);
   outline-offset: calc(var(--border-width-focus) * -1);
 }

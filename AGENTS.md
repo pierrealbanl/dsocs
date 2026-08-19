@@ -20,14 +20,16 @@ Never run a code quality audit unless it is explicitly asked for.
 
 ## 2. Quality gates
 
-All three must pass before a change is done:
+All five must pass before a change is done:
 
 ```bash
-npx tsc --noEmit
+npx tsc -b --force
 npx eslint src --max-warnings=0
+npm run format:check
+npm test
 npm run build
 ```
 
-`npm run build` runs `tsc -b`, which does not use the same configuration as `tsc --noEmit`. A filename-casing error passes the first and fails the second, so run both.
+`tsc -b` is the only type check that reads `tsconfig.app.json`. Running `tsc --noEmit` from the root instead checks nothing at all: the root `tsconfig.json` declares `"files": []` and only references the two project configs, so the command exits 0 whatever the code says. `--force` skips the incremental cache so an unchanged-looking tree is still checked.
 
 Green gates are not proof the change works. Anything the user can see is verified by running the app and looking at the result.

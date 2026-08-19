@@ -1,245 +1,208 @@
-import { prepareMarkdownSource } from "../utils/markdown";
+import { homeDocumentId } from './routes'
+import { uiContent } from './uiContent'
 
 interface Frontmatter {
-  slug?: string;
-  title?: string;
-  sidebarLabel?: string;
-  sidebarPosition?: number;
+  slug?: string
+  title?: string
+  sidebarLabel?: string
+  sidebarPosition?: number
 }
 
 interface CategoryConfiguration {
-  label?: string;
-  position?: number;
+  label?: string
+  position?: number
+}
+
+interface ParsedDocument {
+  id: string
+  title: string
+  shortTitle: string
+  categoryId: string
+  fileName: string
+  position: number
+  source: string
 }
 
 export interface DocumentCategory {
-  id: string;
-  title: string;
-  landingDocumentId?: string;
+  id: string
+  title: string
+  landingDocumentId?: string
 }
 
 export interface DocumentEntry {
-  id: string;
-  title: string;
-  shortTitle: string;
-  category: string;
-  categoryId: string;
-  categories: readonly DocumentCategory[];
-  position: number;
-  isCategoryLanding: boolean;
-  showInSidebar: boolean;
-  source: string;
+  id: string
+  title: string
+  shortTitle: string
+  categoryId: string
+  categories: readonly DocumentCategory[]
+  position: number
+  source: string
 }
 
 export interface DocumentGroup {
-  id: string;
-  title: string;
-  position: number;
-  documents: readonly DocumentEntry[];
-  children: readonly DocumentGroup[];
+  id: string
+  title: string
+  position: number
+  documents: readonly DocumentEntry[]
+  children: readonly DocumentGroup[]
 }
 
-const markdownModules = import.meta.glob<string>("../docs/**/*.md", {
-  eager: true,
-  import: "default",
-  query: "?raw",
-});
+export type NavigationItem = { kind: 'document'; document: DocumentEntry } | { kind: 'group'; group: DocumentGroup }
 
-const categoryModules = import.meta.glob<CategoryConfiguration>(
-  "../docs/**/_category.json",
-  {
-    eager: true,
-    import: "default",
-  },
-);
+const rootCategoryId = 'root'
+const categoryLandingFileName = 'preambule'
+const defaultPosition = 100
+
+const markdownModules = import.meta.glob<string>('../docs/**/*.md', { eager: true, import: 'default', query: '?raw' })
+
+const categoryModules = import.meta.glob<CategoryConfiguration>('../docs/**/_category.json', { eager: true, import: 'default' })
 
 function parseFrontmatter(source: string): Frontmatter {
-  const block = source.match(/^---\n([\s\S]*?)\n---/)?.[1];
-  if (!block) return {};
+  const block = source.match(/^---\n([\s\S]*?)\n---/)?.[1]
+  if (!block) return {}
 
-  const metadata: Frontmatter = {};
-  for (const line of block.split("\n")) {
-    const entry = line.match(/^([a-zA-Z0-9_-]+):\s*(.*?)\s*$/);
-    if (!entry) continue;
-    const value = entry[2].replace(/^['"]|['"]$/g, "");
-    if (entry[1] === "slug") metadata.slug = value;
-    if (entry[1] === "title") metadata.title = value;
-    if (entry[1] === "sidebar_label") metadata.sidebarLabel = value;
-    if (entry[1] === "sidebar_position")
-      metadata.sidebarPosition = Number(value);
+  const metadata: Frontmatter = {}
+  for (const line of block.split('\n')) {
+    const [, key, rawValue] = line.match(/^([a-zA-Z0-9_-]+):\s*(.*?)\s*$/) ?? []
+    if (!key || rawValue === undefined) continue
+    const value = rawValue.replace(/^['"]|['"]$/g, '')
+    if (key === 'slug') metadata.slug = value
+    if (key === 'title') metadata.title = value
+    if (key === 'sidebar_label') metadata.sidebarLabel = value
+    if (key === 'sidebar_position') metadata.sidebarPosition = Number(value)
   }
-  return metadata;
+  return metadata
 }
 
-function getCategoryId(filePath: string): string {
-  return filePath.replace(/^.*\/docs\//, "").replace(/\/_category\.json$/, "");
+function toRelativePath(filePath: string): string {
+  return filePath.replace(/^.*\/docs\//, '')
 }
 
 const categoryConfigurations = new Map(
-  Object.entries(categoryModules).map(([filePath, configuration]) => [
-    getCategoryId(filePath),
-    configuration,
-  ]),
-);
+  Object.entries(categoryModules).map(([filePath, configuration]) => [toRelativePath(filePath).replace(/\/_category\.json$/, ''), configuration]),
+)
 
 function createCategoryTitle(categoryId: string): string {
-  const configuredLabel = categoryConfigurations.get(categoryId)?.label;
-  if (configuredLabel) return configuredLabel;
+  const configuredLabel = categoryConfigurations.get(categoryId)?.label
+  if (configuredLabel) return configuredLabel
 
-  const directoryName = categoryId.split("/").at(-1) ?? categoryId;
+  const directoryName = categoryId.split('/').at(-1) ?? categoryId
   return directoryName
-    .split("-")
-    .map((word) => word.charAt(0).toLocaleUpperCase("fr") + word.slice(1))
-    .join(" ");
+    .split('-')
+    .map((word) => word.charAt(0).toLocaleUpperCase('fr') + word.slice(1))
+    .join(' ')
 }
 
-function createCategoryPath(categoryId: string): readonly DocumentCategory[] {
-  if (categoryId === "root") return [];
-  const segments = categoryId.split("/");
-  return segments.map((_, index) => {
-    const id = segments.slice(0, index + 1).join("/");
-    return {
-      id,
-      title: createCategoryTitle(id),
-    };
-  });
+function createAncestorIds(categoryId: string): readonly string[] {
+  const segments = categoryId.split('/')
+  return segments.map((_, index) => segments.slice(0, index + 1).join('/'))
 }
 
-function createPosition(
-  fileName: string,
-  title: string,
-  frontmatterPosition?: number,
-): number {
-  if (frontmatterPosition !== undefined && Number.isFinite(frontmatterPosition))
-    return frontmatterPosition;
-  if (fileName === "preambule") return -100;
-  return Number(title.match(/^(\d+)/)?.[1] ?? 100);
+function getParentId(categoryId: string): string | undefined {
+  const separatorIndex = categoryId.lastIndexOf('/')
+  return separatorIndex === -1 ? undefined : categoryId.slice(0, separatorIndex)
+}
+
+function createPosition(fileName: string, title: string, frontmatterPosition?: number): number {
+  if (frontmatterPosition !== undefined && Number.isFinite(frontmatterPosition)) return frontmatterPosition
+  if (fileName === categoryLandingFileName) return -defaultPosition
+  return Number(title.match(/^(\d+)/)?.[1] ?? defaultPosition)
 }
 
 function createDocumentId(relativePath: string, slug?: string): string {
-  if (!slug) return relativePath.replaceAll("/", "-");
-  const normalizedSlug = slug.replace(/^\/+|\/+$/g, "");
-  return normalizedSlug
-    ? normalizedSlug.replaceAll("/", "-")
-    : relativePath.replaceAll("/", "-");
+  const normalizedSlug = slug?.replace(/^\/+|\/+$/g, '')
+  return normalizedSlug ? normalizedSlug.replaceAll('/', '-') : relativePath.replaceAll('/', '-')
 }
 
-function createDocument(filePath: string, source: string): DocumentEntry {
-  const relativePath = filePath.replace(/^.*\/docs\//, "").replace(/\.md$/, "");
-  const pathParts = relativePath.split("/");
-  const fileName = pathParts.at(-1) ?? relativePath;
-  const categoryId =
-    pathParts.length > 1 ? pathParts.slice(0, -1).join("/") : "root";
-  const renderedSource = prepareMarkdownSource(source);
-  const metadata = parseFrontmatter(renderedSource);
-  const markdownTitle = renderedSource.match(/^#\s+(.+)$/m)?.[1] ?? fileName;
-  const title = metadata.title ?? markdownTitle;
-  const categories = createCategoryPath(categoryId);
+function parseDocument(filePath: string, source: string): ParsedDocument {
+  const relativePath = toRelativePath(filePath).replace(/\.md$/, '')
+  const pathParts = relativePath.split('/')
+  const fileName = pathParts.at(-1) ?? relativePath
+  const metadata = parseFrontmatter(source)
+  const title = metadata.title ?? source.match(/^#\s+(.+)$/m)?.[1] ?? fileName
 
   return {
     id: createDocumentId(relativePath, metadata.slug),
     title,
     shortTitle: metadata.sidebarLabel ?? title,
-    category: categories.at(-1)?.title ?? "Général",
-    categoryId,
-    categories,
+    categoryId: pathParts.length > 1 ? pathParts.slice(0, -1).join('/') : rootCategoryId,
+    fileName,
     position: createPosition(fileName, title, metadata.sidebarPosition),
-    isCategoryLanding: fileName === "preambule",
-    showInSidebar: true,
-    source: renderedSource,
-  };
+    source,
+  }
 }
 
-function sortDocuments(
-  firstDocument: DocumentEntry,
-  secondDocument: DocumentEntry,
-): number {
-  return (
-    firstDocument.position - secondDocument.position ||
-    firstDocument.title.localeCompare(secondDocument.title, "fr")
-  );
+function sortByPosition<Item extends { position: number; title: string }>(first: Item, second: Item): number {
+  return first.position - second.position || first.title.localeCompare(second.title, 'fr')
 }
 
-function sortGroups(
-  firstGroup: DocumentGroup,
-  secondGroup: DocumentGroup,
-): number {
-  return (
-    firstGroup.position - secondGroup.position ||
-    firstGroup.title.localeCompare(secondGroup.title, "fr")
-  );
-}
+const parsedDocuments = Object.entries(markdownModules)
+  .map(([filePath, source]) => parseDocument(filePath, source))
+  .sort(sortByPosition)
 
-const discoveredDocuments = Object.entries(markdownModules)
-  .map(([filePath, source]) => createDocument(filePath, source))
-  .sort(sortDocuments);
+const landingDocumentIds = new Map(
+  parsedDocuments.filter((document) => document.fileName === categoryLandingFileName).map((document) => [document.categoryId, document.id]),
+)
 
-const categoryLandingDocuments = new Map(
-  discoveredDocuments
-    .filter((document) => document.isCategoryLanding)
-    .map((document) => [document.categoryId, document.id]),
-);
-
-export const documents = discoveredDocuments.map((document) => ({
-  ...document,
-  categories: document.categories.map((category) => ({
-    ...category,
-    landingDocumentId: categoryLandingDocuments.get(category.id),
-  })),
-}));
-
-export const rootDocuments = documents.filter(
-  (document) => document.categoryId === "root" && document.showInSidebar,
-);
-
-const groupedDocuments = new Map<string, DocumentEntry[]>();
-for (const document of documents.filter(
-  (entry) => entry.categoryId !== "root",
-)) {
-  const group = groupedDocuments.get(document.categoryId) ?? [];
-  group.push(document);
-  groupedDocuments.set(document.categoryId, group);
-}
-
-const groupIds = new Set<string>([
-  ...categoryConfigurations.keys(),
-  ...groupedDocuments.keys(),
-]);
-for (const groupId of [...groupIds]) {
-  const segments = groupId.split("/");
-  for (let index = 1; index < segments.length; index += 1)
-    groupIds.add(segments.slice(0, index).join("/"));
-}
-
-const groups = new Map<string, DocumentGroup>();
-for (const id of groupIds) {
-  groups.set(id, {
+function createCategoryPath(categoryId: string): readonly DocumentCategory[] {
+  if (categoryId === rootCategoryId) return []
+  return createAncestorIds(categoryId).map((id) => ({
     id,
     title: createCategoryTitle(id),
-    position: categoryConfigurations.get(id)?.position ?? 100,
-    documents: (groupedDocuments.get(id) ?? []).sort(sortDocuments),
-    children: [],
-  });
+    landingDocumentId: landingDocumentIds.get(id),
+  }))
 }
 
-for (const group of groups.values()) {
-  const parentId = group.id.includes("/")
-    ? group.id.slice(0, group.id.lastIndexOf("/"))
-    : undefined;
-  if (parentId) (groups.get(parentId)?.children as DocumentGroup[]).push(group);
+export const documents: readonly DocumentEntry[] = parsedDocuments.map((document) => ({
+  id: document.id,
+  title: document.title,
+  shortTitle: document.shortTitle,
+  categoryId: document.categoryId,
+  categories: createCategoryPath(document.categoryId),
+  position: document.position,
+  source: document.source,
+}))
+
+const groupIds = new Set(
+  [...categoryConfigurations.keys(), ...documents.map((document) => document.categoryId)].filter((id) => id !== rootCategoryId).flatMap(createAncestorIds),
+)
+
+function createGroup(groupId: string): DocumentGroup {
+  return {
+    id: groupId,
+    title: createCategoryTitle(groupId),
+    position: categoryConfigurations.get(groupId)?.position ?? defaultPosition,
+    documents: documents.filter((document) => document.categoryId === groupId),
+    children: [...groupIds]
+      .filter((id) => getParentId(id) === groupId)
+      .map(createGroup)
+      .sort(sortByPosition),
+  }
 }
 
-for (const group of groups.values())
-  (group.children as DocumentGroup[]).sort(sortGroups);
+function toNavigationPosition(item: NavigationItem): number {
+  return item.kind === 'document' ? item.document.position : item.group.position
+}
 
-export const documentGroups: readonly DocumentGroup[] = [...groups.values()]
-  .filter((group) => !group.id.includes("/"))
-  .sort(sortGroups);
+function toNavigationTitle(item: NavigationItem): string {
+  return item.kind === 'document' ? item.document.shortTitle : item.group.title
+}
+
+export const navigationItems: readonly NavigationItem[] = [
+  ...documents.filter((document) => document.categoryId === rootCategoryId).map((document): NavigationItem => ({ kind: 'document', document })),
+  ...[...groupIds]
+    .filter((id) => getParentId(id) === undefined)
+    .map(createGroup)
+    .map((group): NavigationItem => ({ kind: 'group', group })),
+].sort((first, second) => toNavigationPosition(first) - toNavigationPosition(second) || toNavigationTitle(first).localeCompare(toNavigationTitle(second), 'fr'))
+
+function requireDocument(document: DocumentEntry | undefined): DocumentEntry {
+  if (!document) throw new Error(uiContent.missingDocuments)
+  return document
+}
+
+const fallbackDocument = requireDocument(documents.find((document) => document.id === homeDocumentId) ?? documents[0])
 
 export function findDocument(id: string | undefined): DocumentEntry {
-  return (
-    documents.find((document) => document.id === id) ??
-    documents.find((document) => document.id === "preambule") ??
-    documents[0]
-  );
+  return documents.find((document) => document.id === id) ?? fallbackDocument
 }

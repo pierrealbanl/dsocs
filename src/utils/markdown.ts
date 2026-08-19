@@ -1,116 +1,80 @@
+export const calloutKinds = ['info', 'warning', 'success', 'danger', 'tip', 'note'] as const
+
+export type CalloutKind = (typeof calloutKinds)[number]
+
 export interface DocumentHeading {
-  id: string;
-  level: number;
-  label: string;
+  id: string
+  level: number
+  label: string
 }
 
 export interface MarkdownSegment {
-  kind: "markdown" | "info" | "warning" | "success" | "danger" | "tip" | "note";
-  content: string;
+  kind: 'markdown' | CalloutKind
+  content: string
 }
 
-function getDirectiveKind(value: string): MarkdownSegment["kind"] {
-  switch (value) {
-    case "info":
-      return "info";
-    case "warning":
-      return "warning";
-    case "success":
-      return "success";
-    case "danger":
-      return "danger";
-    case "tip":
-      return "tip";
-    case "note":
-      return "note";
-    default:
-      return "note";
-  }
+const frontmatterPattern = /^---\n[\s\S]*?\n---\n?/
+const headingPattern = /^(#{2,3})\s+(.+)$/
+const markdownEmphasisPattern = /[`*_]/g
+
+function isCalloutKind(value: string): value is CalloutKind {
+  return calloutKinds.some((kind) => kind === value)
 }
 
 export function removeFrontmatter(source: string): string {
-  return source.replace(/^---\n[\s\S]*?\n---\n?/, "");
-}
-
-export function prepareMarkdownSource(source: string): string {
-  const lines = source.split("\n");
-  const firstSecondLevelHeading = lines.findIndex((line) =>
-    /^##\s+/.test(line),
-  );
-  let isCodeFenceOpen = false;
-
-  return lines
-    .map((line, index) => {
-      if (/^```/.test(line)) {
-        isCodeFenceOpen = !isCodeFenceOpen;
-        return line;
-      }
-      if (isCodeFenceOpen) return line;
-
-      const normalizedTerminology = line.replace(/\bCPP\b/g, "C++");
-      const isLeadingThirdLevelHeading =
-        /^###\s+/.test(normalizedTerminology) &&
-        (firstSecondLevelHeading === -1 || index < firstSecondLevelHeading);
-      return isLeadingThirdLevelHeading
-        ? normalizedTerminology.replace(/^###\s+/, "## ")
-        : normalizedTerminology;
-    })
-    .join("\n");
+  return source.replace(frontmatterPattern, '')
 }
 
 export function createHeadingId(value: string): string {
   return value
     .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[`*_]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(markdownEmphasisPattern, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
 }
 
 export function createTextId(value: string): string {
-  let hash = 2166136261;
+  let hash = 2166136261
   for (const character of value) {
-    hash ^= character.charCodeAt(0);
-    hash = Math.imul(hash, 16777619);
+    hash ^= character.charCodeAt(0)
+    hash = Math.imul(hash, 16777619)
   }
-  return Math.abs(hash).toString(36);
+  return Math.abs(hash).toString(36)
+}
+
+function toHeading(line: string): DocumentHeading | undefined {
+  const [, levelMarker, label] = line.match(headingPattern) ?? []
+  if (!levelMarker || !label) return undefined
+  return { id: createHeadingId(label), level: levelMarker.length, label: label.replace(markdownEmphasisPattern, '') }
 }
 
 export function extractHeadings(source: string): readonly DocumentHeading[] {
   return removeFrontmatter(source)
-    .split("\n")
-    .map((line) => line.match(/^(#{2,3})\s+(.+)$/))
-    .filter((match): match is RegExpMatchArray => match !== null)
-    .map((match) => ({
-      id: createHeadingId(match[2]),
-      level: match[1].length,
-      label: match[2].replace(/[*_`]/g, ""),
-    }));
+    .split('\n')
+    .flatMap((line) => toHeading(line) ?? [])
 }
 
 export function splitMarkdown(source: string): readonly MarkdownSegment[] {
-  const content = removeFrontmatter(source);
-  const segments: MarkdownSegment[] = [];
-  const directive =
-    /^:::(info|warning|success|danger|tip|note)\s*\n([\s\S]*?)\n:::/gm;
-  let cursor = 0;
-  let match = directive.exec(content);
+  const content = removeFrontmatter(source)
+  const directive = new RegExp(`^:::(${calloutKinds.join('|')})\\s*\\n([\\s\\S]*?)\\n:::`, 'gm')
+  const segments: MarkdownSegment[] = []
+  let cursor = 0
+  let match = directive.exec(content)
 
   while (match) {
+    const [directiveText, kind, calloutContent] = match
     if (match.index > cursor) {
-      segments.push({
-        kind: "markdown",
-        content: content.slice(cursor, match.index),
-      });
+      segments.push({ kind: 'markdown', content: content.slice(cursor, match.index) })
     }
-    segments.push({ kind: getDirectiveKind(match[1]), content: match[2] });
-    cursor = match.index + match[0].length;
-    match = directive.exec(content);
+    segments.push({ kind: kind && isCalloutKind(kind) ? kind : 'note', content: calloutContent ?? '' })
+    cursor = match.index + directiveText.length
+    match = directive.exec(content)
   }
 
   if (cursor < content.length) {
-    segments.push({ kind: "markdown", content: content.slice(cursor) });
+    segments.push({ kind: 'markdown', content: content.slice(cursor) })
   }
-  return segments;
+  return segments
 }
