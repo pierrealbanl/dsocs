@@ -1,7 +1,7 @@
 ---
 title: Clean Code by Robert C. Martin
 sidebar_label: Clean Code by Robert C. Martin
-sidebar_position: 4
+sidebar_position: 3
 ---
 
 # Clean Code by Robert C. Martin
