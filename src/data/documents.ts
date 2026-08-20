@@ -1,12 +1,6 @@
+import { parseFrontmatter } from '../utils/frontmatter'
 import { homeDocumentId } from './routes'
 import { uiContent } from './uiContent'
-
-interface Frontmatter {
-  slug?: string
-  title?: string
-  sidebarLabel?: string
-  sidebarPosition?: number
-}
 
 interface CategoryConfiguration {
   label?: string
@@ -23,7 +17,7 @@ interface ParsedDocument {
   source: string
 }
 
-export interface DocumentCategory {
+interface DocumentCategory {
   id: string
   title: string
   landingDocumentId?: string
@@ -47,7 +41,7 @@ export interface DocumentGroup {
   children: readonly DocumentGroup[]
 }
 
-export type NavigationItem = { kind: 'document'; document: DocumentEntry } | { kind: 'group'; group: DocumentGroup }
+type NavigationItem = { kind: 'document'; document: DocumentEntry } | { kind: 'group'; group: DocumentGroup }
 
 const rootCategoryId = 'root'
 const categoryLandingFileName = 'preambule'
@@ -56,23 +50,6 @@ const defaultPosition = 100
 const markdownModules = import.meta.glob<string>('../docs/**/*.md', { eager: true, import: 'default', query: '?raw' })
 
 const categoryModules = import.meta.glob<CategoryConfiguration>('../docs/**/_category.json', { eager: true, import: 'default' })
-
-function parseFrontmatter(source: string): Frontmatter {
-  const block = source.match(/^---\n([\s\S]*?)\n---/)?.[1]
-  if (!block) return {}
-
-  const metadata: Frontmatter = {}
-  for (const line of block.split('\n')) {
-    const [, key, rawValue] = line.match(/^([a-zA-Z0-9_-]+):\s*(.*?)\s*$/) ?? []
-    if (!key || rawValue === undefined) continue
-    const value = rawValue.replace(/^['"]|['"]$/g, '')
-    if (key === 'slug') metadata.slug = value
-    if (key === 'title') metadata.title = value
-    if (key === 'sidebar_label') metadata.sidebarLabel = value
-    if (key === 'sidebar_position') metadata.sidebarPosition = Number(value)
-  }
-  return metadata
-}
 
 function toRelativePath(filePath: string): string {
   return filePath.replace(/^.*\/docs\//, '')

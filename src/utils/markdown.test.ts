@@ -1,15 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createHeadingId, createTextId, extractHeadings, removeFrontmatter, splitMarkdown } from './markdown'
-
-describe('removeFrontmatter', () => {
-  it('removes a leading frontmatter block', () => {
-    expect(removeFrontmatter('---\ntitle: A\n---\n# B')).toBe('# B')
-  })
-
-  it('leaves a document without frontmatter untouched', () => {
-    expect(removeFrontmatter('# B\n\n---\n')).toBe('# B\n\n---\n')
-  })
-})
+import { createHeadingId, createTextId, extractHeadings, splitMarkdown } from './markdown'
 
 describe('createHeadingId', () => {
   it('strips accents, markdown emphasis and punctuation', () => {

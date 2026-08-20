@@ -15,15 +15,18 @@
   border-bottom: var(--border-width-hairline) solid var(--color-code-border);
   color: var(--color-code-helper);
   font: var(--font-size-xs) var(--font-family-mono);
-  text-transform: uppercase;
   overflow: hidden;
 }
 
-.code-block__toolbar > span:first-child {
+.code-block__name {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.code-block__name--language {
+  text-transform: uppercase;
 }
 
 .code-block__toolbar button {
@@ -47,11 +50,11 @@
 .code-block__pre {
   width: 100%;
   max-width: 100%;
-  margin: 0 !important;
-  padding: var(--spacing-lg) !important;
+  margin: 0;
+  padding: var(--spacing-lg);
   overflow-x: auto;
   overflow-y: hidden;
-  font: var(--font-size-sm)/var(--line-height-code) var(--font-family-mono) !important;
+  font: var(--font-size-sm) / var(--line-height-code) var(--font-family-mono);
 }
 
 .code-block__status {

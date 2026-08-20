@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react'
 
-export type Theme = 'light' | 'dark'
+type Theme = 'light' | 'dark'
 
 const themeStorageKey = 'engineering-docs-theme'
 

@@ -1,4 +1,6 @@
-export const calloutKinds = ['info', 'warning', 'success', 'danger', 'tip', 'note'] as const
+import { removeFrontmatter } from './frontmatter'
+
+const calloutKinds = ['info', 'warning', 'success', 'danger', 'tip', 'note'] as const
 
 export type CalloutKind = (typeof calloutKinds)[number]
 
@@ -8,21 +10,16 @@ export interface DocumentHeading {
   label: string
 }
 
-export interface MarkdownSegment {
+interface MarkdownSegment {
   kind: 'markdown' | CalloutKind
   content: string
 }
 
-const frontmatterPattern = /^---\n[\s\S]*?\n---\n?/
 const headingPattern = /^(#{2,3})\s+(.+)$/
 const markdownEmphasisPattern = /[`*_]/g
 
 function isCalloutKind(value: string): value is CalloutKind {
   return calloutKinds.some((kind) => kind === value)
-}
-
-export function removeFrontmatter(source: string): string {
-  return source.replace(frontmatterPattern, '')
 }
 
 export function createHeadingId(value: string): string {

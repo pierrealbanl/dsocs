@@ -4,11 +4,12 @@ import remarkGfm from 'remark-gfm'
 import { uiContent } from '../../../data/uiContent'
 import { createHeadingId, createTextId, splitMarkdown } from '../../../utils/markdown'
 import Callout from './Callout'
+import CodeBlock from './CodeBlock'
 import './MarkdownDocument.css'
 
 const lineBreakPattern = /<br\s*\/?>/i
+const fenceTitlePattern = /title="([^"]+)"/
 
-const CodeBlock = lazy(() => import('./CodeBlock'))
 const MermaidDiagram = lazy(() => import('./MermaidDiagram'))
 
 interface MarkdownDocumentProps {
@@ -22,12 +23,15 @@ function flattenText(node: ReactNode): string {
   return ''
 }
 
+function readFenceTitle(meta: unknown): string | undefined {
+  if (typeof meta !== 'string') return undefined
+  return meta.match(fenceTitlePattern)?.[1]
+}
+
 function createHeadingIdFromChildren(children: ReactNode): string {
   return createHeadingId(flattenText(children))
 }
 
-// Raw HTML is not parsed, so an authored <br/> reaches the tree as text. Tables are the one
-// place Markdown has no syntax for a line break, which is where the documents use it.
 function withLineBreaks(children: ReactNode): ReactNode {
   return Children.map(children, (child) => {
     if (typeof child === 'string') {
@@ -61,7 +65,7 @@ const markdownComponents: Components = {
   th: ({ children, style }) => <th style={style}>{withLineBreaks(children)}</th>,
   td: ({ children, style }) => <td style={style}>{withLineBreaks(children)}</td>,
   pre: ({ children }) => <>{children}</>,
-  code: ({ children, className }) => {
+  code: ({ children, className, node }) => {
     const languageName = className?.replace('language-', '') ?? ''
     const code = String(children).replace(/\n$/, '')
 
@@ -73,25 +77,14 @@ const markdownComponents: Components = {
       )
     }
     if (!className) return <code>{children}</code>
-    return (
-      <Suspense
-        fallback={
-          <pre className="markdown-document__code-loading">
-            <code>{code}</code>
-          </pre>
-        }
-      >
-        <CodeBlock code={code} languageName={languageName} />
-      </Suspense>
-    )
+    return <CodeBlock code={code} languageName={languageName} title={readFenceTitle(node?.data?.meta)} />
   },
 }
 
 function renderMarkdown(content: string): ReactNode {
-  const preparedContent = content.replace(/```([a-zA-Z0-9-]+)\s+title="([^"]+)"/g, '**$2**\n\n```$1')
   return (
     <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
-      {preparedContent}
+      {content}
     </ReactMarkdown>
   )
 }

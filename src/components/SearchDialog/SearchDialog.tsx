@@ -2,7 +2,7 @@ import { ArrowRight, ArrowUpRight, Close, Search } from '@carbon/icons-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { documents } from '../../data/documents'
 import { uiContent } from '../../data/uiContent'
-import { removeFrontmatter } from '../../utils/markdown'
+import { removeFrontmatter } from '../../utils/frontmatter'
 import './SearchDialog.css'
 
 interface SearchDialogProps {

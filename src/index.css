@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400;1,600&display=swap');
 
 :root {
   --color-surface-page: #ffffff;
@@ -36,9 +36,9 @@
   --color-header-text: #161616;
   --color-header-text-muted: #6f6f6f;
   --color-header-focus: #0f62fe;
-  --color-code-background: #161616;
+  --color-code-background: #262626;
   --color-code-border: #393939;
-  --color-code-hover: #353535;
+  --color-code-hover: #333333;
   --color-code-text: #f4f4f4;
   --color-code-helper: #a8a8a8;
   --color-overlay: rgba(0, 0, 0, 0.6);
@@ -74,27 +74,22 @@
   --width-sidebar: 20rem;
   --width-sidebar-mobile: 20rem;
   --width-table-of-contents: 20rem;
-  --width-article: 55rem;
   --width-heading: 48rem;
   --width-search-trigger: 14.5rem;
   --width-search-dialog: 38rem;
   --width-callout-symbol: 3rem;
   --height-header: 3rem;
-  --height-sidebar-heading: 3.5rem;
   --height-nav-item: 2.5rem;
   --height-control: 2.5rem;
   --height-search-trigger: 2rem;
   --height-search-field: 3rem;
   --height-search-result: 3.5rem;
   --height-code-toolbar: 3rem;
-  --size-brand-mark: 1.5rem;
-  --size-status: 0.5rem;
 
   --border-width-hairline: 1px;
   --border-width-emphasis: 4px;
   --border-width-active: 3px;
   --border-width-focus: 2px;
-  --radius-circle: 999px;
   --duration-fast: 180ms;
   --shadow-panel: 0.5rem 0 1.5rem rgba(0, 0, 0, 0.15);
   --shadow-dialog: 0 0.75rem 2.25rem rgba(0, 0, 0, 0.35);
